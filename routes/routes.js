@@ -50,7 +50,7 @@ var appRouter = function (app) {
 
         try {
             const client = await pool.connect();
-            const result = await client.query(`INSERT INTO queue VALUES (${qid}, ${email}, ${status});`);
+            const result = await client.query(`INSERT INTO queue VALUES (${qid}, '${email}', ${status});`);
             res.send(data);
             client.release();
         } catch (err) {
