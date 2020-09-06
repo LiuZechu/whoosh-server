@@ -48,6 +48,8 @@ var appRouter = function (app) {
             status: status
         };
 
+        console.log(data);
+
         try {
             const client = await pool.connect();
             const result = await client.query(`INSERT INTO queue VALUES (${qid}, '${email}', ${status});`);
