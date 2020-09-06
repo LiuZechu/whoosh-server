@@ -1,30 +1,40 @@
 const faker = require("faker");
-const { Client } = require('pg');
 
-// Connect to Postgres database
-const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false
-    }
-  });
+// For postgres
+const { Pool } = require('pg');
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
+// const { Client } = require('pg');
+
+// // Connect to Postgres database
+// const client = new Client({
+//     connectionString: process.env.DATABASE_URL,
+//     ssl: {
+//       rejectUnauthorized: false
+//     }
+//   });
   
 var appRouter = function (app) {
-    // experimenting with pg database
+    
+    
+    // // experimenting with pg database
+    // app.get("/", function (req, http_response) {
 
-    app.get("/", function (req, http_response) {
-
-        client.connect();
+    //     client.connect();
   
-        client.query('SELECT * FROM students;', (err, res) => {
-            if (err) throw err;
-            var response = JSON.stringify(res)
-            http_response.status(200).send(response);
-            client.end();
-        });
-      });
-
-    //
+    //     client.query('SELECT * FROM students;', (err, res) => {
+    //         if (err) throw err;
+    //         var response = JSON.stringify(res)
+    //         http_response.status(200).send(response);
+    //         client.end();
+    //     });
+    //   });
+    // //
 
     app.get("/", function (req, res) {
         res.status(200).send({ message: 'Welcome to our restful API' });
@@ -61,6 +71,20 @@ var appRouter = function (app) {
     }
 
     });
+
+    // another experiment with postgres
+    app.get('/db', async (req, res) => {
+        try {
+          const client = await pool.connect();
+          const result = await client.query('SELECT * FROM students');
+          const results = { 'results': (result) ? result.rows : null};
+          res.render('pages/db', results );
+          client.release();
+        } catch (err) {
+          console.error(err);
+          res.send("Error " + err);
+        }
+    })
 }
 
 module.exports = appRouter;
