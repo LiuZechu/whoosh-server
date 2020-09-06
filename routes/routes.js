@@ -20,7 +20,7 @@ var appRouter = function (app) {
             if (err) throw err;
             var response = JSON.stringify(res)
             http_response.status(200).send(response);
-            client.end();
+            client.release();
         });
       });
     //
