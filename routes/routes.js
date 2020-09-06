@@ -7,37 +7,13 @@ const pool = new Pool({
     rejectUnauthorized: false
   }
 });
-
-// const { Client } = require('pg');
-
-// // Connect to Postgres database
-// const client = new Client({
-//     connectionString: process.env.DATABASE_URL,
-//     ssl: {
-//       rejectUnauthorized: false
-//     }
-// });
   
 var appRouter = function (app) {
     
-    // // experimenting with pg database
-    // app.get("/", function (req, http_response) {
-
-    //     client.connect();
-  
-    //     client.query('SELECT * FROM students;', (err, res) => {
-    //         if (err) throw err;
-    //         var response = JSON.stringify(res)
-    //         http_response.status(200).send(response);
-    //         client.end();
-    //     });
-    //   });
-    // //
-
-    app.get('/db', async (req, res) => {
+    app.get('/queue', async (req, res) => {
         try {
             const client = await pool.connect();
-            const result = await client.query('SELECT * FROM students');
+            const result = await client.query('SELECT * FROM queue;');
             const results = { 'results': (result) ? result.rows : null};
             res.send(JSON.stringify(results));
             client.release();
@@ -47,6 +23,22 @@ var appRouter = function (app) {
         }
     })
 
+    app.get('/queue/:qid', async (req, res) => {
+        var qid = parseInt(req.params.qid);
+        
+        try {
+            const client = await pool.connect();
+            const result = await client.query(`SELECT * FROM queue WHERE qid == ${qid};`);
+            const results = { 'results': (result) ? result.rows : null};
+            res.send(JSON.stringify(results));
+            client.release();
+        } catch (err) {
+            console.error(err);
+            res.send("Error " + err);
+        }
+    })
+
+    // Non Postgres-related APIs (for testing only)
     app.get("/", function (req, res) {
         res.status(200).send({ message: 'Welcome to our restful API' });
     });
