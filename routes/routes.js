@@ -28,7 +28,7 @@ var appRouter = function (app) {
         
         try {
             const client = await pool.connect();
-            const result = await client.query(`SELECT * FROM queue WHERE qid == ${qid};`);
+            const result = await client.query(`SELECT * FROM queue WHERE qid = ${qid};`);
             const results = { 'results': (result) ? result.rows : null};
             res.send(JSON.stringify(results));
             client.release();
@@ -37,6 +37,27 @@ var appRouter = function (app) {
             res.send("Error " + err);
         }
     })
+
+    app.post("/queue", function (req, res) {
+        var qid = parseInt(req.body.qid);
+        var email = req.body.email;
+        var status = parseInt(req.body.status);
+        var data = {
+            qid: qid,
+            email: email,
+            status: status
+        };
+
+        try {
+            const client = await pool.connect();
+            const result = await client.query(`INSERT INTO queue VALUES (${qid}, ${email}, ${status});`);
+            res.send(data);
+            client.release();
+        } catch (err) {
+            console.error(err);
+            res.send("Error " + err);
+        }
+    });
 
     // Non Postgres-related APIs (for testing only)
     app.get("/", function (req, res) {
