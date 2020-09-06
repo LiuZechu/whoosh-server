@@ -38,7 +38,7 @@ var appRouter = function (app) {
         }
     })
 
-    app.post("/queue", function (req, res) {
+    app.post("/queue", async function (req, res) {
         var qid = parseInt(req.body.qid);
         var email = req.body.email;
         var status = parseInt(req.body.status);
