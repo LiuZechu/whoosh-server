@@ -10,6 +10,7 @@ const pool = new Pool({
   
 var appRouter = function (app) {
     
+    // GET methods
     app.get('/queue', async (req, res) => {
         try {
             const client = await pool.connect();
@@ -38,6 +39,7 @@ var appRouter = function (app) {
         }
     })
 
+    // POST methods
     app.post("/queue", async function (req, res) {
         var qid = parseInt(req.body.qid);
         var email = req.body.email;
@@ -48,11 +50,49 @@ var appRouter = function (app) {
             status: status
         };
 
-        console.log(data);
-
         try {
             const client = await pool.connect();
             const result = await client.query(`INSERT INTO queue VALUES (${qid}, '${email}', ${status});`);
+            res.send(data);
+            client.release();
+        } catch (err) {
+            console.error(err);
+            res.send("Error " + err);
+        }
+    });
+
+    // PUT methods
+    app.put("/queue", async function (req, res) {
+        var qid = parseInt(req.body.qid);
+        var email = req.body.email;
+        var status = parseInt(req.body.status);
+        var data = {
+            qid: qid,
+            email: email,
+            status: status
+        };
+
+        try {
+            const client = await pool.connect();
+            const sql_query = `UPDATE queue SET email = '${email}', status = ${status} ` +
+                `WHERE qid = ${qid};`;
+            const result = await client.query(sql_query);
+            res.send(data);
+            client.release();
+        } catch (err) {
+            console.error(err);
+            res.send("Error " + err);
+        }
+    });
+
+    // DELETE methods
+    app.delete("/queue", async function (req, res) {
+        var qid = parseInt(req.body.qid);
+        
+        try {
+            const client = await pool.connect();
+            const sql_query = `DELETE FROM queue WHERE qid = ${qid};`;
+            const result = await client.query(sql_query);
             res.send(data);
             client.release();
         } catch (err) {
