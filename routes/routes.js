@@ -7,7 +7,7 @@ const client = new Client({
     ssl: {
       rejectUnauthorized: false
     }
-  });
+});
   
 var appRouter = function (app) {
     
@@ -25,9 +25,9 @@ var appRouter = function (app) {
       });
     //
 
-    app.get("/", function (req, res) {
-        res.status(200).send({ message: 'Welcome to our restful API' });
-    });
+    // app.get("/", function (req, res) {
+    //     res.status(200).send({ message: 'Welcome to our restful API' });
+    // });
 
     app.get("/user", function (req, res) {
         var data = ({
