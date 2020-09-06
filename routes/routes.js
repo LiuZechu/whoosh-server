@@ -18,10 +18,7 @@ var appRouter = function (app) {
   
         client.query('CREATE TABLE students (sid INTEGER PRIMARY KEY); INSERT INTO students VALUES (123); SELECT * FROM students;', (err, res) => {
             if (err) throw err;
-            var response = ""
-            for (let row of res.rows) {
-                response += JSON.stringify(row) + "\n";
-            }
+            var response = string(res)
             res.status(200).send(response);
             client.end();
         });
