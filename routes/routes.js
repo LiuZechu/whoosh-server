@@ -16,7 +16,7 @@ var appRouter = function (app) {
 
         client.connect();
   
-        client.query('CREATE TABLE students (sid INTEGER PRIMARY KEY); INSERT INTO students VALUES (123); SELECT * FROM students;', (err, res) => {
+        client.query('SELECT * FROM students;', (err, res) => {
             if (err) throw err;
             var response = string(res)
             res.status(200).send(response);
