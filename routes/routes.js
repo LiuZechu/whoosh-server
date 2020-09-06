@@ -18,7 +18,7 @@ var appRouter = function (app) {
   
         client.query('SELECT * FROM students;', (err, res) => {
             if (err) throw err;
-            var response = string(res)
+            var response = JSON.stringify(res)
             res.status(200).send(response);
             client.end();
         });
