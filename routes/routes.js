@@ -12,14 +12,14 @@ const client = new Client({
 var appRouter = function (app) {
     // experimenting with pg database
 
-    app.get("/", function (req, res) {
+    app.get("/", function (req, http_response) {
 
         client.connect();
   
         client.query('SELECT * FROM students;', (err, res) => {
             if (err) throw err;
             var response = JSON.stringify(res)
-            res.status(200).send(response);
+            http_response.status(200).send(response);
             client.end();
         });
       });
