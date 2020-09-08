@@ -93,7 +93,7 @@ var appRouter = function (app) {
             const client = await pool.connect();
             const sql_query = `DELETE FROM queue WHERE qid = ${qid};`;
             const result = await client.query(sql_query);
-            res.send(data);
+            res.send(`${qid} is deleted.`);
             client.release();
         } catch (err) {
             console.error(err);
@@ -103,7 +103,7 @@ var appRouter = function (app) {
 
     // Non Postgres-related APIs (for testing only)
     app.get("/", function (req, res) {
-        res.status(200).send({ message: 'Welcome to our restful API' });
+        res.status(200).send("[1, 2, 3, 4, 5, 6, 7, 8, 9]");
     });
 
     app.get("/user", function (req, res) {
