@@ -55,7 +55,7 @@ var appRouter = function (app) {
                 + "entry_time VARCHAR, "
                 + "group_size INTEGER NOT NULL, "
                 + "monster_type VARCHAR NOT NULL, "
-                + "queue_status INTEGER NOT NULL"
+                + "queue_status INTEGER NOT NULL, "
                 + "email VARCHAR );"
             await client.query(create_table_query);
             
