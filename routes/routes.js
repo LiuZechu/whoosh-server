@@ -24,7 +24,7 @@ var appRouter = function (app) {
         }
     })
 
-    // POST methods
+    // POST
     app.post("/restaurants", async function (req, res) {
         try {
             const client = await pool.connect();
@@ -67,17 +67,17 @@ var appRouter = function (app) {
         }
     });
 
-
-
-
-
-    app.get('/queue/:qid', async (req, res) => {
-        var qid = parseInt(req.params.qid);
+    // RESTAURANT 
+    // GET
+    app.get('/restaurants/:restaurant_id', async (req, res) => {
+        var restaurant_id = parseInt(req.params.restaurant_id);
         
         try {
             const client = await pool.connect();
-            const result = await client.query(`SELECT * FROM queue WHERE qid = ${qid};`);
+            const result = await client.query(`SELECT * FROM restaurants WHERE restaurant_id = ${restaurant_id};`);
             const results = { 'results': (result) ? result.rows : null};
+            
+            res.setHeader('content-type', 'application/json');
             res.send(JSON.stringify(results));
             client.release();
         } catch (err) {
@@ -86,24 +86,26 @@ var appRouter = function (app) {
         }
     })
 
+    // PUT
+    app.put("/restaurants/:restaurant_id", async function (req, res) {
+        const restaurant_id = parseInt(req.params.restaurant_id);
+        const restaurant_name = req.body.restaurant_name;
+        const unit_queue_time = parseInt(req.body.unit_queue_time);
+        const icon_url = req.body.icon_url;
 
-
-    // PUT methods
-    app.put("/queue", async function (req, res) {
-        var qid = parseInt(req.body.qid);
-        var email = req.body.email;
-        var status = parseInt(req.body.status);
         var data = {
-            qid: qid,
-            email: email,
-            status: status
+            restaurant_id: restaurant_id,
+            restaurant_name: restaurant_name,
+            unit_queue_time: unit_queue_time,
+            icon_url: icon_url
         };
 
         try {
             const client = await pool.connect();
-            const sql_query = `UPDATE queue SET email = '${email}', status = ${status} ` +
-                `WHERE qid = ${qid};`;
-            const result = await client.query(sql_query);
+            const update_query = `UPDATE restaurants SET restaurant_name = '${restaurant_name}', `
+                + `unit_queue_time = ${unit_queue_time}, icon_url = '${icon_url}' `
+                + `WHERE restaurant_id = ${restaurant_id};`;
+            const result = await client.query(update_query);
             res.send(data);
             client.release();
         } catch (err) {
