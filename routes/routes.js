@@ -28,7 +28,7 @@ var appRouter = function (app) {
     app.post("/restaurants", async function (req, res) {
         try {
             const client = await pool.connect();
-            const result = await client.query('SELECT * FROM restaurants;');
+            var result = await client.query('SELECT * FROM restaurants;');
             const number_of_restaurants = len(result);
             
             const restaurant_id = number_of_restaurants + 1;
@@ -43,7 +43,7 @@ var appRouter = function (app) {
             };
 
             const sql_query = `INSERT INTO restaurants VALUES (${restaurant_id}, '${restaurant_name}', ${unit_queue_time}, '${icon_url}');`;
-            const result = await client.query(sql_query);
+            result = await client.query(sql_query);
             res.send(data);
             client.release();
         } catch (err) {
