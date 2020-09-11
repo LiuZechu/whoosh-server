@@ -152,6 +152,9 @@ async function delete_restaurant(req, res) {
         const drop_table_query = `DROP TABLE restaurant${restaurant_id};`
         const result = await client.query(drop_table_query);
 
+        console.log("delete result is");
+        console.log(result);
+
         if (result.rowCount != 0) {
             res.send(`Restaurant (ID: ${restaurant_id}) is deleted.`);
         } else {
