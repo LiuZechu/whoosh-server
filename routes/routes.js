@@ -6,9 +6,6 @@ const pool = new Pool({
   }
 });
 
-// try out
-const restaurants_routes = require('restaurant_routes.js');
-
 var appRouter = function (app) {
     
     // RESTAURANTS COLLECTION
