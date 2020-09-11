@@ -29,7 +29,7 @@ var appRouter = function (app) {
         try {
             const client = await pool.connect();
             var result = await client.query('SELECT * FROM restaurants;');
-            const number_of_restaurants = result.rows.length;
+            const number_of_restaurants = (result) ? result.rows.length : 0;
             
             const restaurant_id = number_of_restaurants + 1;
             const restaurant_name = req.body.restaurant_name;
@@ -45,8 +45,20 @@ var appRouter = function (app) {
             console.log("data is")
             console.log(data);
 
-            const sql_query = `INSERT INTO restaurants VALUES (${restaurant_id}, '${restaurant_name}', ${unit_queue_time}, '${icon_url}');`;
-            result = await client.query(sql_query);
+            const insert_query = `INSERT INTO restaurants VALUES (${restaurant_id}, '${restaurant_name}', ${unit_queue_time}, '${icon_url}');`;
+            await client.query(insert_query);
+            // create a new table
+            const create_table_query = `CREATE TABLE restaurant${restaurant_id} (`
+                + "group_id INTEGER PRIMARY KEY, "
+                + "group_name VARCHAR NOT NULL, "
+                + "arrival_time VARCHAR NOT NULL, "
+                + "entry_time VARCHAR, "
+                + "group_size INTEGER NOT NULL, "
+                + "monster_type VARCHAR NOT NULL, "
+                + "queue_status INTEGER NOT NULL"
+                + "email VARCHAR );"
+            await client.query(create_table_query);
+            
             res.send(data);
             client.release();
         } catch (err) {
