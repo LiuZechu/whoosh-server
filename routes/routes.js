@@ -6,23 +6,14 @@ const pool = new Pool({
   }
 });
 
+// try out
+const restaurants_routes = require('restaurant_routes.js');
+
 var appRouter = function (app) {
     
     // RESTAURANTS COLLECTION
     // GET
-    app.get('/restaurants', async (req, res) => {
-        try {
-            const client = await pool.connect();
-            const result = await client.query('SELECT * FROM restaurants;');
-            //const results = { 'results': (result) ? result.rows : null};
-            res.setHeader('content-type', 'application/json');
-            res.send(JSON.stringify(result.rows));
-            client.release();
-        } catch (err) {
-            console.error(err);
-            res.send("Error " + err);
-        }
-    })
+    app.get("/restaurants", list_all_restaurants);
 
     // POST
     app.post("/restaurants", async function (req, res) {
@@ -269,6 +260,20 @@ var appRouter = function (app) {
             res.send("Error " + err);
         }
     });
+}
+
+async function list_all_restaurants(req, res) {
+    try {
+        const client = await pool.connect();
+        const result = await client.query('SELECT * FROM restaurants;');
+        //const results = { 'results': (result) ? result.rows : null};
+        res.setHeader('content-type', 'application/json');
+        res.send(JSON.stringify(result.rows));
+        client.release();
+    } catch (err) {
+        console.error(err);
+        res.send("Error " + err);
+    }
 }
 
 module.exports = appRouter;
