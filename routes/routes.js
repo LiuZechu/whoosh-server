@@ -1,5 +1,3 @@
-const faker = require("faker");
-
 const { Pool } = require('pg');
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -10,19 +8,53 @@ const pool = new Pool({
   
 var appRouter = function (app) {
     
-    // GET methods
-    app.get('/queue', async (req, res) => {
+    // RESTAURANTS COLLECTION
+    // GET
+    app.get('/restaurants', async (req, res) => {
         try {
             const client = await pool.connect();
-            const result = await client.query('SELECT * FROM queue;');
-            const results = { 'results': (result) ? result.rows : null};
-            res.send(JSON.stringify(results));
+            const result = await client.query('SELECT * FROM restaurants;');
+            //const results = { 'results': (result) ? result.rows : null};
+            res.setHeader('content-type', 'application/json');
+            res.send(JSON.stringify(result.rows));
             client.release();
         } catch (err) {
             console.error(err);
             res.send("Error " + err);
         }
     })
+
+    // POST methods
+    app.post("/restaurants", async function (req, res) {
+        try {
+            const client = await pool.connect();
+            const result = await client.query('SELECT * FROM restaurants;');
+            const number_of_restaurants = len(result);
+            
+            const restaurant_id = number_of_restaurants + 1;
+            const restaurant_name = req.body.restaurant_name;
+            const unit_queue_time = parseInt(req.body.unit_queue_time);
+            const icon_url = req.body.icon_url;
+            const data = {
+                restaurant_id: restaurant_id,
+                restaurant_name: restaurant_name,
+                unit_queue_time: unit_queue_time,
+                icon_url: icon_url
+            };
+
+            const sql_query = `INSERT INTO restaurants VALUES (${restaurant_id}, '${restaurant_name}', ${unit_queue_time}, '${icon_url}');`;
+            const result = await client.query(sql_query);
+            res.send(data);
+            client.release();
+        } catch (err) {
+            console.error(err);
+            res.send("Error " + err);
+        }
+    });
+
+
+
+
 
     app.get('/queue/:qid', async (req, res) => {
         var qid = parseInt(req.params.qid);
@@ -39,27 +71,7 @@ var appRouter = function (app) {
         }
     })
 
-    // POST methods
-    app.post("/queue", async function (req, res) {
-        var qid = parseInt(req.body.qid);
-        var email = req.body.email;
-        var status = parseInt(req.body.status);
-        var data = {
-            qid: qid,
-            email: email,
-            status: status
-        };
 
-        try {
-            const client = await pool.connect();
-            const result = await client.query(`INSERT INTO queue VALUES (${qid}, '${email}', ${status});`);
-            res.send(data);
-            client.release();
-        } catch (err) {
-            console.error(err);
-            res.send("Error " + err);
-        }
-    });
 
     // PUT methods
     app.put("/queue", async function (req, res) {
@@ -99,43 +111,6 @@ var appRouter = function (app) {
             console.error(err);
             res.send("Error " + err);
         }
-    });
-
-    // Non Postgres-related APIs (for testing only)
-    app.get("/", function (req, res) {
-        res.status(200).send("[1, 2, 3, 4, 5, 6, 7, 8, 9]");
-    });
-
-    app.get("/user", function (req, res) {
-        var data = ({
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        username: faker.internet.userName(),
-        email: faker.internet.email()
-        });
-        res.status(200).send(data);
-    });
-
-    app.get("/users/:num", function (req, res) {
-    var users = [];
-    var num = req.params.num;
-
-    if (isFinite(num) && num  > 0 ) {
-        for (i = 0; i <= num-1; i++) {
-        users.push({
-            firstName: faker.name.firstName(),
-            lastName: faker.name.lastName(),
-            username: faker.internet.userName(),
-            email: faker.internet.email()
-            });
-        }
-
-        res.status(200).send(users);
-        
-    } else {
-        res.status(400).send({ message: 'invalid number supplied' });
-    }
-
     });
 }
 
