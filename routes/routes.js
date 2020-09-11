@@ -114,15 +114,18 @@ var appRouter = function (app) {
         }
     });
 
-    // DELETE methods
-    app.delete("/queue", async function (req, res) {
-        var qid = parseInt(req.body.qid);
-        
+    // DELETE
+    app.delete("/restaurants/:restaurant_id", async function (req, res) {
+        const restaurant_id = parseInt(req.params.restaurant_id);
+
         try {
             const client = await pool.connect();
-            const sql_query = `DELETE FROM queue WHERE qid = ${qid};`;
-            const result = await client.query(sql_query);
-            res.send(`${qid} is deleted.`);
+            const delete_query = `DELETE FROM restaurants WHERE restaurant_id = ${restaurant_id};`;
+            await client.query(delete_query);
+            const drop_table_query = `DROP TABLE restaurant${restaurant_id};`
+            await client.query(drop_table_query);
+
+            res.send(`Restaurant (ID: ${restaurant_id}) is deleted.`);
             client.release();
         } catch (err) {
             console.error(err);
