@@ -150,20 +150,13 @@ async function delete_restaurant(req, res) {
         const delete_query = `DELETE FROM restaurants WHERE restaurant_id = ${restaurant_id};`;
         await client.query(delete_query);
         const drop_table_query = `DROP TABLE restaurant${restaurant_id};`
-        const result = await client.query(drop_table_query);
+        await client.query(drop_table_query);
 
-        console.log("delete result is");
-        console.log(result);
-
-        if (result.rowCount != 0) {
-            res.send(`Restaurant (ID: ${restaurant_id}) is deleted.`);
-        } else {
-            res.status(404).send("This restaurant ID does not exist.");
-        }
+        res.send(`Restaurant (ID: ${restaurant_id}) is deleted.`);
         client.release();
     } catch (err) {
         console.error(err);
-        res.status(400).send("Error " + err);
+        res.status(404).send("This restaurant ID does not exist.");
     }
 }
 
@@ -181,7 +174,7 @@ async function list_all_queue_groups(req, res) {
         client.release();
     } catch (err) {
         console.error(err);
-        res.send("Error " + err);
+        res.status(400).send("Error " + err);
     }
 }
 
@@ -213,11 +206,11 @@ async function create_new_queue_group(req, res) {
             + `'${monster_type}', ${queue_status}, '${email}');`;
         await client.query(insert_query);
         
-        res.send(data);
+        res.status(201).send(data);
         client.release();
     } catch (err) {
         console.error(err);
-        res.send("Error " + err);
+        res.status(400).send("Error " + err);
     }
 }
 
@@ -232,12 +225,16 @@ async function list_one_queue_group (req, res) {
         const result = await client.query(select_query);
         const results = (result) ? result.rows : null;
         
-        res.setHeader('content-type', 'application/json');
-        res.send(JSON.stringify(results));
+        if (results == null || results.length == 0) {
+            res.status(404).send("This queue group ID does not exist.");
+        } else {
+            res.setHeader('content-type', 'application/json');
+            res.send(JSON.stringify(results));
+        }
         client.release();
     } catch (err) {
         console.error(err);
-        res.send("Error " + err);
+        res.status(400).send("Error " + err);
     }
 }
 
@@ -272,13 +269,17 @@ async function update_queue_group(req, res) {
             + `group_size = ${group_size}, monster_type = '${monster_type}', `
             + `queue_status = ${queue_status}, email = '${email}'`
             + `WHERE group_id = ${group_id};`;
-        await client.query(update_query);
+        const result = await client.query(update_query);
 
-        res.send(data);
+        if (result.rowCount != 0) {
+            res.send(data);
+        } else {
+            res.status(404).send("This queue group ID does not exist.");
+        }
         client.release();
     } catch (err) {
         console.error(err);
-        res.send("Error " + err);
+        res.status(400).send("Error " + err);
     }
 }
 
@@ -289,7 +290,10 @@ async function delete_queue_group(req, res) {
     try {
         const client = await pool.connect();
         const delete_query = `DELETE FROM restaurant${restaurant_id} WHERE group_id = ${group_id};`;
-        await client.query(delete_query);
+        const result = await client.query(delete_query);
+
+        console.log("delete result is");
+        console.log(result);
 
         res.send(`Queue group (ID: ${group_id}) is deleted.`);
         client.release();
