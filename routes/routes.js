@@ -42,6 +42,9 @@ var appRouter = function (app) {
                 icon_url: icon_url
             };
 
+            print("data is")
+            print(data);
+
             const sql_query = `INSERT INTO restaurants VALUES (${restaurant_id}, '${restaurant_name}', ${unit_queue_time}, '${icon_url}');`;
             result = await client.query(sql_query);
             res.send(data);
