@@ -51,8 +51,8 @@ var appRouter = function (app) {
             const create_table_query = `CREATE TABLE restaurant${restaurant_id} (`
                 + "group_id INTEGER PRIMARY KEY, "
                 + "group_name VARCHAR NOT NULL, "
-                + "arrival_time DATETIME NOT NULL, "
-                + "entry_time DATETIME, "
+                + "arrival_time TIMESTAMP WITH TIME ZONE NOT NULL, "
+                + "entry_time TIMESTAMP WITH TIME ZONE, "
                 + "group_size INTEGER NOT NULL, "
                 + "monster_type VARCHAR NOT NULL, "
                 + "queue_status INTEGER NOT NULL, "
