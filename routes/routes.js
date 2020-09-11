@@ -29,7 +29,7 @@ var appRouter = function (app) {
         try {
             const client = await pool.connect();
             var result = await client.query('SELECT * FROM restaurants;');
-            const number_of_restaurants = result.length;
+            const number_of_restaurants = result.rows.length;
             
             const restaurant_id = number_of_restaurants + 1;
             const restaurant_name = req.body.restaurant_name;
