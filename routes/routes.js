@@ -130,14 +130,15 @@ async function update_restaurant(req, res) {
             + `WHERE restaurant_id = ${restaurant_id};`;
         const result = await client.query(update_query);
 
-        console.log("update result: ");
-        console.log(result);
-
-        res.send(data);
+        if (result.rowCount != 0) {
+            res.send(data);
+        } else {
+            res.status(404).send("This restaurant ID does not exist.");
+        }
         client.release();
     } catch (err) {
         console.error(err);
-        res.send("Error " + err);
+        res.status(400).send("Error " + err);
     }
 }
 
@@ -149,13 +150,17 @@ async function delete_restaurant(req, res) {
         const delete_query = `DELETE FROM restaurants WHERE restaurant_id = ${restaurant_id};`;
         await client.query(delete_query);
         const drop_table_query = `DROP TABLE restaurant${restaurant_id};`
-        await client.query(drop_table_query);
+        const result = await client.query(drop_table_query);
 
-        res.send(`Restaurant (ID: ${restaurant_id}) is deleted.`);
+        if (result.rowCount != 0) {
+            res.send(`Restaurant (ID: ${restaurant_id}) is deleted.`);
+        } else {
+            res.status(404).send("This restaurant ID does not exist.");
+        }
         client.release();
     } catch (err) {
         console.error(err);
-        res.send("Error " + err);
+        res.status(400).send("Error " + err);
     }
 }
 
