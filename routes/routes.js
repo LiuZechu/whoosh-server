@@ -5,7 +5,7 @@ const pool = new Pool({
     rejectUnauthorized: false
   }
 });
-  
+
 var appRouter = function (app) {
     
     // RESTAURANTS COLLECTION
