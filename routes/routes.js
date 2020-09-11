@@ -39,7 +39,7 @@ async function list_all_restaurants(req, res) {
         client.release();
     } catch (err) {
         console.error(err);
-        res.send("Error " + err);
+        res.status(400).send("Error " + err);
     }
 }
 
@@ -78,11 +78,11 @@ async function create_new_restaurant(req, res) {
             + "email VARCHAR );"
         await client.query(create_table_query);
         
-        res.send(data);
+        res.status(201).send(data);
         client.release();
     } catch (err) {
         console.error(err);
-        res.send("Error " + err);
+        res.status(400).send("Error " + err);
     }
 }
 
@@ -96,12 +96,16 @@ async function list_one_restaurant(req, res) {
         const result = await client.query(select_query);
         const results = (result) ? result.rows : null;
         
-        res.setHeader('content-type', 'application/json');
-        res.send(JSON.stringify(results));
+        if (results == null || results.length == 0) {
+            res.status(404).send("This restaurant ID does not exist.");
+        } else {
+            res.setHeader('content-type', 'application/json');
+            res.send(JSON.stringify(results));
+        }
         client.release();
     } catch (err) {
         console.error(err);
-        res.send("Error " + err);
+        res.status(400).send("Error " + err);
     }
 }
 
@@ -124,7 +128,10 @@ async function update_restaurant(req, res) {
         const update_query = `UPDATE restaurants SET restaurant_name = '${restaurant_name}', `
             + `unit_queue_time = ${unit_queue_time}, icon_url = '${icon_url}' `
             + `WHERE restaurant_id = ${restaurant_id};`;
-        await client.query(update_query);
+        const result = await client.query(update_query);
+
+        console.log("update result: ");
+        console.log(result);
 
         res.send(data);
         client.release();
