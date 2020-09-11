@@ -94,7 +94,7 @@ async function list_one_restaurant(req, res) {
         const client = await pool.connect();
         const select_query = `SELECT * FROM restaurants WHERE restaurant_id = ${restaurant_id};`;
         const result = await client.query(select_query);
-        const results = { 'results': (result) ? result.rows : null};
+        const results = (result) ? result.rows : null;
         
         res.setHeader('content-type', 'application/json');
         res.send(JSON.stringify(results));
@@ -215,7 +215,7 @@ async function list_one_queue_group (req, res) {
         const client = await pool.connect();
         const select_query = `SELECT * FROM restaurant${restaurant_id} WHERE group_id = ${group_id};`;
         const result = await client.query(select_query);
-        const results = { 'results': (result) ? result.rows : null};
+        const results = (result) ? result.rows : null;
         
         res.setHeader('content-type', 'application/json');
         res.send(JSON.stringify(results));
