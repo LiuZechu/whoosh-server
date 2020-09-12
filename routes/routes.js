@@ -165,10 +165,15 @@ async function delete_restaurant(req, res) {
 // GET
 async function list_all_queue_groups(req, res) {
     const restaurant_id = parseInt(req.params.restaurant_id);
+    const queue_status = parseInt(req.query.status);
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT * FROM restaurant${restaurant_id};`);
-        
+        var result;
+        if (typeof queue_status === 'undefined') {
+            result = await client.query(`SELECT * FROM restaurant${restaurant_id};`);
+        } else {
+            result = await client.query(`SELECT * FROM restaurant${restaurant_id} WHERE queue_status = ${queue_status}`);
+        }
         res.setHeader('content-type', 'application/json');
         res.send(JSON.stringify(result.rows));
         client.release();
