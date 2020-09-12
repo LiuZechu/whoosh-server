@@ -165,7 +165,7 @@ async function delete_restaurant(req, res) {
 // GET
 async function list_all_queue_groups(req, res) {
     const restaurant_id = parseInt(req.params.restaurant_id);
-    const queue_status = parseInt(req.query.status);
+    const queue_status = req.query.status;
     try {
         const client = await pool.connect();
         var result;
