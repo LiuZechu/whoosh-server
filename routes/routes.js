@@ -116,10 +116,10 @@ async function update_restaurant(req, res) {
     const unit_queue_time = req.body.unit_queue_time;
     const icon_url = req.body.icon_url;
 
-    print("rest id is ", restaurant_id)
-    print("restaurant_name is ", restaurant_name)
-    print("unit_queue_time is ", unit_queue_time)
-    print("icon_url ", icon_url)
+    console.log("rest id is ", restaurant_id)
+    console.log("restaurant_name is ", restaurant_name)
+    console.log("unit_queue_time is ", unit_queue_time)
+    console.log("icon_url ", icon_url)
 
     var data = {
         restaurant_id: restaurant_id,
