@@ -111,10 +111,15 @@ async function list_one_restaurant(req, res) {
 
 // PUT
 async function update_restaurant(req, res) {
-    const restaurant_id = parseInt(req.params.restaurant_id);
+    const restaurant_id = req.params.restaurant_id;
     const restaurant_name = req.body.restaurant_name;
-    const unit_queue_time = parseInt(req.body.unit_queue_time);
+    const unit_queue_time = req.body.unit_queue_time;
     const icon_url = req.body.icon_url;
+
+    print("rest id is ", restaurant_id)
+    print("restaurant_name is ", restaurant_name)
+    print("unit_queue_time is ", unit_queue_time)
+    print("icon_url ", icon_url)
 
     var data = {
         restaurant_id: restaurant_id,
