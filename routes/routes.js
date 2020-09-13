@@ -115,30 +115,36 @@ async function update_restaurant(req, res) {
     const restaurant_name = req.body.restaurant_name;
     const unit_queue_time = req.body.unit_queue_time;
     const icon_url = req.body.icon_url;
-
-    console.log("rest id is ", restaurant_id)
-    console.log("restaurant_name is ", restaurant_name)
-    console.log("unit_queue_time is ", unit_queue_time)
-    console.log("icon_url ", icon_url)
-
-    var data = {
-        restaurant_id: restaurant_id,
-        restaurant_name: restaurant_name,
-        unit_queue_time: unit_queue_time,
-        icon_url: icon_url
-    };
+    var is_req_body_empty = true;
 
     try {
         const client = await pool.connect();
-        const update_query = `UPDATE restaurants SET restaurant_name = '${restaurant_name}', `
-            + `unit_queue_time = ${unit_queue_time}, icon_url = '${icon_url}' `
+        if (typeof restaurant_name != 'undefined') {
+            const update_query = `UPDATE restaurants SET restaurant_name = '${restaurant_name}' `
             + `WHERE restaurant_id = ${restaurant_id};`;
-        const result = await client.query(update_query);
+            await client.query(update_query);
+            is_req_body_empty = false
+        }
+        if (typeof unit_queue_time != 'undefined') {
+            const update_query = `UPDATE restaurants SET unit_queue_time = ${unit_queue_time} `
+            + `WHERE restaurant_id = ${restaurant_id};`;
+            await client.query(update_query);
+            is_req_body_empty = false
+        }
+        if (typeof icon_url != 'undefined') {
+            const update_query = `UPDATE restaurants SET icon_url = '${icon_url}' `
+            + `WHERE restaurant_id = ${restaurant_id};`;
+            await client.query(update_query);
+            is_req_body_empty = false
+        }
 
-        if (result.rowCount != 0) {
-            res.send(data);
-        } else {
+        const result = await client.query(`SELECT * FROM restaurants WHERE restaurant_id = ${restaurant_id};`);
+        if (result.rowCount != 0 && !is_req_body_empty) {
+            res.send(JSON.stringify(result.rows[0]));
+        } else if (result.rowCount == 0) {
             res.status(404).send("This restaurant ID does not exist.");
+        } else {
+            res.status(400).send("Request body cannot be empty.");
         }
         client.release();
     } catch (err) {
