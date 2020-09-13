@@ -259,51 +259,65 @@ async function list_one_queue_group (req, res) {
 async function update_queue_group(req, res) {
     const restaurant_id = req.params.restaurant_id;
     const group_id = req.params.group_id;
-    const group_name = req.body.group_name;
-    const arrival_time = req.body.arrival_time;
-    const entry_time = req.body.entry_time;
-    const group_size = req.body.group_size;
-    const monster_type = req.body.monster_type;
-    const queue_status = req.body.queue_status;
-    const email = req.body.email;
+    // const group_name = req.body.group_name;
+    // const arrival_time = req.body.arrival_time;
+    // const entry_time = req.body.entry_time;
+    // const group_size = req.body.group_size;
+    // const monster_type = req.body.monster_type;
+    // const queue_status = req.body.queue_status;
+    // const email = req.body.email;
     var is_req_body_empty = true;
-
-    for (const [key, value] of Object.entries(req.body)) {
-        console.log(key, value);
-    }
 
     try {
         const client = await pool.connect();
-        if (typeof group_name != 'undefined') {
+        for (const [key, value] of Object.entries(req.body)) {
             const update_query = `UPDATE restaurant${restaurant_id} `
-            + `SET group_name = '${group_name}' WHERE group_id = ${group_id};`;
+            + `SET ${key} = '${value}' WHERE group_id = ${group_id};`;
             await client.query(update_query);
             is_req_body_empty = false
         }
-        if (typeof arrival_time != 'undefined') {
-            const update_query = `UPDATE restaurant${restaurant_id} `
-            + `SET arrival_time = '${arrival_time}' WHERE group_id = ${group_id};`;
-            await client.query(update_query);
-            is_req_body_empty = false
+
+        const result = await client.query(`SELECT * FROM restaurant${restaurant_id} WHERE group_id = ${group_id};`);
+        if (result.rowCount != 0 && !is_req_body_empty) {
+            res.setHeader('content-type', 'application/json');
+            res.send(JSON.stringify(result.rows[0]));
+        } else if (result.rowCount == 0) {
+            res.status(404).send("This queue group ID does not exist.");
+        } else {
+            res.status(400).send("Request body cannot be empty.");
         }
-        if (typeof entry_time != 'undefined') {
-            const update_query = `UPDATE restaurant${restaurant_id} `
-            + `SET entry_time = '${entry_time}' WHERE group_id = ${group_id};`;
-            await client.query(update_query);
-            is_req_body_empty = false
-        }
-        if (typeof group_size != 'undefined') {
-            const update_query = `UPDATE restaurant${restaurant_id} `
-            + `SET group_size = ${group_size} WHERE group_id = ${group_id};`;
-            await client.query(update_query);
-            is_req_body_empty = false
-        }
-        if (typeof group_size != 'undefined') {
-            const update_query = `UPDATE restaurant${restaurant_id} `
-            + `SET group_size = ${group_size} WHERE group_id = ${group_id};`;
-            await client.query(update_query);
-            is_req_body_empty = false
-        }
+        client.release();
+
+        // if (typeof group_name != 'undefined') {
+        //     const update_query = `UPDATE restaurant${restaurant_id} `
+        //     + `SET group_name = '${group_name}' WHERE group_id = ${group_id};`;
+        //     await client.query(update_query);
+        //     is_req_body_empty = false
+        // }
+        // if (typeof arrival_time != 'undefined') {
+        //     const update_query = `UPDATE restaurant${restaurant_id} `
+        //     + `SET arrival_time = '${arrival_time}' WHERE group_id = ${group_id};`;
+        //     await client.query(update_query);
+        //     is_req_body_empty = false
+        // }
+        // if (typeof entry_time != 'undefined') {
+        //     const update_query = `UPDATE restaurant${restaurant_id} `
+        //     + `SET entry_time = '${entry_time}' WHERE group_id = ${group_id};`;
+        //     await client.query(update_query);
+        //     is_req_body_empty = false
+        // }
+        // if (typeof group_size != 'undefined') {
+        //     const update_query = `UPDATE restaurant${restaurant_id} `
+        //     + `SET group_size = ${group_size} WHERE group_id = ${group_id};`;
+        //     await client.query(update_query);
+        //     is_req_body_empty = false
+        // }
+        // if (typeof group_size != 'undefined') {
+        //     const update_query = `UPDATE restaurant${restaurant_id} `
+        //     + `SET group_size = ${group_size} WHERE group_id = ${group_id};`;
+        //     await client.query(update_query);
+        //     is_req_body_empty = false
+        // }
 
 
 
@@ -312,7 +326,7 @@ async function update_queue_group(req, res) {
         // } else {
         //     res.status(404).send("This queue group ID does not exist.");
         // }
-        client.release();
+        // client.release();
     } catch (err) {
         console.error(err);
         res.status(400).send("Error " + err);
