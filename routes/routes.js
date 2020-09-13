@@ -140,6 +140,7 @@ async function update_restaurant(req, res) {
 
         const result = await client.query(`SELECT * FROM restaurants WHERE restaurant_id = ${restaurant_id};`);
         if (result.rowCount != 0 && !is_req_body_empty) {
+            res.setHeader('content-type', 'application/json');
             res.send(JSON.stringify(result.rows[0]));
         } else if (result.rowCount == 0) {
             res.status(404).send("This restaurant ID does not exist.");
@@ -256,42 +257,59 @@ async function list_one_queue_group (req, res) {
 
 // PUT
 async function update_queue_group(req, res) {
-    const restaurant_id = parseInt(req.params.restaurant_id);
-    const group_id = parseInt(req.params.group_id);
+    const restaurant_id = req.params.restaurant_id;
+    const group_id = req.params.group_id;
     const group_name = req.body.group_name;
     const arrival_time = req.body.arrival_time;
     const entry_time = req.body.entry_time;
-    const group_size = parseInt(req.body.group_size);
+    const group_size = req.body.group_size;
     const monster_type = req.body.monster_type;
-    const queue_status = parseInt(req.body.queue_status);
+    const queue_status = req.body.queue_status;
     const email = req.body.email;
+    var is_req_body_empty = true;
 
-    var data = {
-        group_id: group_id,
-        group_name: group_name,
-        arrival_time: arrival_time,
-        entry_time: entry_time,
-        group_size: group_size,
-        monster_type: monster_type,
-        queue_status: queue_status,
-        email: email
-    };
+    console.log(req.body)
 
     try {
         const client = await pool.connect();
-        const update_query = `UPDATE restaurant${restaurant_id} `
-            + `SET group_name = '${group_name}', `
-            + `arrival_time = '${arrival_time}', entry_time = '${entry_time}', `
-            + `group_size = ${group_size}, monster_type = '${monster_type}', `
-            + `queue_status = ${queue_status}, email = '${email}'`
-            + `WHERE group_id = ${group_id};`;
-        const result = await client.query(update_query);
-
-        if (result.rowCount != 0) {
-            res.send(data);
-        } else {
-            res.status(404).send("This queue group ID does not exist.");
+        if (typeof group_name != 'undefined') {
+            const update_query = `UPDATE restaurant${restaurant_id} `
+            + `SET group_name = '${group_name}' WHERE group_id = ${group_id};`;
+            await client.query(update_query);
+            is_req_body_empty = false
         }
+        if (typeof arrival_time != 'undefined') {
+            const update_query = `UPDATE restaurant${restaurant_id} `
+            + `SET arrival_time = '${arrival_time}' WHERE group_id = ${group_id};`;
+            await client.query(update_query);
+            is_req_body_empty = false
+        }
+        if (typeof entry_time != 'undefined') {
+            const update_query = `UPDATE restaurant${restaurant_id} `
+            + `SET entry_time = '${entry_time}' WHERE group_id = ${group_id};`;
+            await client.query(update_query);
+            is_req_body_empty = false
+        }
+        if (typeof group_size != 'undefined') {
+            const update_query = `UPDATE restaurant${restaurant_id} `
+            + `SET group_size = ${group_size} WHERE group_id = ${group_id};`;
+            await client.query(update_query);
+            is_req_body_empty = false
+        }
+        if (typeof group_size != 'undefined') {
+            const update_query = `UPDATE restaurant${restaurant_id} `
+            + `SET group_size = ${group_size} WHERE group_id = ${group_id};`;
+            await client.query(update_query);
+            is_req_body_empty = false
+        }
+
+
+
+        // if (result.rowCount != 0) {
+        //     res.send(data);
+        // } else {
+        //     res.status(404).send("This queue group ID does not exist.");
+        // }
         client.release();
     } catch (err) {
         console.error(err);
