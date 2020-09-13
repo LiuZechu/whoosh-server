@@ -268,7 +268,9 @@ async function update_queue_group(req, res) {
     const email = req.body.email;
     var is_req_body_empty = true;
 
-    console.log(req.body)
+    for (const [key, value] of Object.entries(req.body)) {
+        console.log(key, value);
+    }
 
     try {
         const client = await pool.connect();
