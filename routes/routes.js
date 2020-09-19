@@ -75,7 +75,8 @@ async function create_new_restaurant(req, res) {
             + "group_size INTEGER NOT NULL, "
             + "monster_type VARCHAR NOT NULL, "
             + "queue_status INTEGER NOT NULL, "
-            + "email VARCHAR );"
+            + "phone_number CHAR(8), "
+            + "CONSTRAINT check_phone CHECK (phone_number NOT LIKE '%[^0-9]%') );"
         await client.query(create_table_query);
         
         res.status(201).send(data);
@@ -208,19 +209,19 @@ async function create_new_queue_group(req, res) {
         const group_size = parseInt(req.body.group_size);
         const monster_type = req.body.monster_type;
         const queue_status = parseInt(req.body.queue_status);
-        const email = req.body.email;
+        const phone_number = req.body.phone_number;
         const data = {
             group_id: group_id,
             group_name: group_name,
             group_size: group_size,
             monster_type: monster_type,
             queue_status: queue_status,
-            email: email
+            phone_number: phone_number
         };
 
         const insert_query = `INSERT INTO restaurant${restaurant_id} VALUES `
             + `(${group_id}, '${group_name}', NOW(), NULL, ${group_size}, `
-            + `'${monster_type}', ${queue_status}, '${email}');`;
+            + `'${monster_type}', ${queue_status}, '${phone_number}');`;
         await client.query(insert_query);
         
         res.status(201).send(data);
