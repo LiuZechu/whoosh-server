@@ -68,7 +68,7 @@ async function create_new_restaurant(req, res) {
         
         // create a new table to store this restaurant's queue groups
         const create_table_query = `CREATE TABLE restaurant${restaurant_id} (`
-            + "group_id INTEGER PRIMARY KEY, "
+            + "group_id SERIAL PRIMARY KEY, "
             + "group_name VARCHAR NOT NULL, "
             + "arrival_time TIMESTAMP WITH TIME ZONE NOT NULL, "
             + "entry_time TIMESTAMP WITH TIME ZONE, "
