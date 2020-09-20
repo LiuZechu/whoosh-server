@@ -8,7 +8,7 @@ const nexmo = new Nexmo({
 var appRouter = function (app) {
     // NOTE: DO NOT UNCOMMENT THIS. I HAVE LIMTED FREE CREDIT FOR SMS.
     // uncomment this to send SMS
-    app.post("/sms", send_sms);
+    // app.post("/sms", send_sms);
 }
 
 async function send_sms(req, res) {
@@ -17,7 +17,7 @@ async function send_sms(req, res) {
         const text = req.body.text;
 
         if (!isNaN(phone_number)) {
-            const from = 'Vonage APIs'; 
+            const from = 'Whoosh'; 
             const to = '6591546534'; // hardcoded for testing; should use phone_number above.
             nexmo.message.sendSms(from, to, text);
 
