@@ -72,7 +72,7 @@ async function create_new_restaurant(req, res) {
             + "CONSTRAINT check_phone CHECK (phone_number LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]') );"
         await client.query(create_table_query);
         
-        const data = await client.query(`SELECT * from restaurants WHERE restuarant_id = ${restaurant_id}`);
+        const data = await client.query(`SELECT * from restaurants WHERE restaurant_id = ${restaurant_id}`);
         res.status(201).send(JSON.stringify(data.rows));
         client.release();
     } catch (err) {
