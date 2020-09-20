@@ -8,7 +8,7 @@ const nexmo = new Nexmo({
 var appRouter = function (app) {
     // NOTE: DO NOT UNCOMMENT THIS. I HAVE LIMTED FREE CREDIT FOR SMS.
     // uncomment this to send SMS
-    //app.post("/sms", send_sms);
+    app.post("/sms", send_sms);
 }
 
 async function send_sms(req, res) {
