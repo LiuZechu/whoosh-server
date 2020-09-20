@@ -210,8 +210,11 @@ async function create_new_queue_group(req, res) {
         const queue_status = req.body.queue_status;
         const phone_number = req.body.phone_number;
 
+        // generate random string of 8 characters
+        const group_key = generate_random_string(8);
+
         const insert_query = `INSERT INTO restaurant${restaurant_id} VALUES `
-            + `(DEFAULT, '${group_name}', NOW(), NULL, ${group_size}, `
+            + `(DEFAULT, '${group_key}', '${group_name}', NOW(), NULL, ${group_size}, `
             + `'${monster_type}', ${queue_status}, '${phone_number}') RETURNING group_id;`;
         const result = await client.query(insert_query);
         const group_id = result.rows[0].group_id;
@@ -302,5 +305,16 @@ async function delete_queue_group(req, res) {
     }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////
+
+function generate_random_string(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+ }
+
 
 module.exports = appRouter;
