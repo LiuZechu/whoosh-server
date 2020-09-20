@@ -221,7 +221,7 @@ async function create_new_queue_group(req, res) {
         const data = await client.query(`SELECT * from restaurant${restaurant_id} WHERE group_id = ${group_id}`);
         
         res.setHeader('content-type', 'application/json');
-        res.status(201).send(JSON.stringify(data.rows));
+        res.status(201).send(JSON.stringify(data.rows[0]));
         client.release();
     } catch (err) {
         console.error(err);
