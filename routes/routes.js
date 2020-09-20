@@ -54,16 +54,18 @@ async function create_new_restaurant(req, res) {
         const restaurant_name = req.body.restaurant_name;
         const unit_queue_time = parseInt(req.body.unit_queue_time);
         const icon_url = req.body.icon_url;
+        const menu_url = req.body.menu_url;
         const data = {
             restaurant_id: restaurant_id,
             restaurant_name: restaurant_name,
             unit_queue_time: unit_queue_time,
-            icon_url: icon_url
+            icon_url: icon_url,
+            menu_url: menu_url
         };
 
         // insert into `restaurants` table
         const insert_query = `INSERT INTO restaurants VALUES (${restaurant_id}, '${restaurant_name}', `
-            + `${unit_queue_time}, '${icon_url}');`;
+            + `${unit_queue_time}, '${icon_url}', '${menu_url}');`;
         await client.query(insert_query);
         
         // create a new table to store this restaurant's queue groups
@@ -116,6 +118,7 @@ async function update_restaurant(req, res) {
     const restaurant_name = req.body.restaurant_name;
     const unit_queue_time = req.body.unit_queue_time;
     const icon_url = req.body.icon_url;
+    const menu_url = req.body.menu_url;
     var is_req_body_empty = true;
 
     try {
@@ -134,6 +137,12 @@ async function update_restaurant(req, res) {
         }
         if (typeof icon_url != 'undefined') {
             const update_query = `UPDATE restaurants SET icon_url = '${icon_url}' `
+            + `WHERE restaurant_id = ${restaurant_id};`;
+            await client.query(update_query);
+            is_req_body_empty = false
+        }
+        if (typeof menu_url != 'undefined') {
+            const update_query = `UPDATE restaurants SET menu_url = '${menu_url}' `
             + `WHERE restaurant_id = ${restaurant_id};`;
             await client.query(update_query);
             is_req_body_empty = false
