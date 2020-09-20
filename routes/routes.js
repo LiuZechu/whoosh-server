@@ -73,6 +73,8 @@ async function create_new_restaurant(req, res) {
         await client.query(create_table_query);
         
         const data = await client.query(`SELECT * from restaurants WHERE restaurant_id = ${restaurant_id}`);
+        
+        res.setHeader('content-type', 'application/json');
         res.status(201).send(JSON.stringify(data.rows));
         client.release();
     } catch (err) {
@@ -202,30 +204,21 @@ async function create_new_queue_group(req, res) {
     const restaurant_id = parseInt(req.params.restaurant_id);
     try {
         const client = await pool.connect();
-        var result = await client.query(`SELECT * FROM restaurant${restaurant_id};`);
-        const number_of_groups = (result) ? result.rows.length : 0;
-        
-        const group_id = number_of_groups + 1;
         const group_name = req.body.group_name;
-        const group_size = parseInt(req.body.group_size);
+        const group_size = req.body.group_size;
         const monster_type = req.body.monster_type;
-        const queue_status = parseInt(req.body.queue_status);
+        const queue_status = req.body.queue_status;
         const phone_number = req.body.phone_number;
-        const data = {
-            group_id: group_id,
-            group_name: group_name,
-            group_size: group_size,
-            monster_type: monster_type,
-            queue_status: queue_status,
-            phone_number: phone_number
-        };
 
         const insert_query = `INSERT INTO restaurant${restaurant_id} VALUES `
-            + `(${group_id}, '${group_name}', NOW(), NULL, ${group_size}, `
-            + `'${monster_type}', ${queue_status}, '${phone_number}');`;
-        await client.query(insert_query);
+            + `(DEFAULT, '${group_name}', NOW(), NULL, ${group_size}, `
+            + `'${monster_type}', ${queue_status}, '${phone_number}') RETURNING group_id;`;
+        const result = await client.query(insert_query);
+        const group_id = result.rows[0].group_id;
+        const data = await client.query(`SELECT * from restaurant${restaurant_id} WHERE group_id = ${group_id}`);
         
-        res.status(201).send(data);
+        res.setHeader('content-type', 'application/json');
+        res.status(201).send(JSON.stringify(data.rows));
         client.release();
     } catch (err) {
         console.error(err);
