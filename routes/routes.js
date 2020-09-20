@@ -46,31 +46,22 @@ async function list_all_restaurants(req, res) {
 // POST
 async function create_new_restaurant(req, res) {
     try {
-        const client = await pool.connect();
-        var result = await client.query('SELECT * FROM restaurants;');
-        const number_of_restaurants = (result) ? result.rows.length : 0;
-        
-        const restaurant_id = number_of_restaurants + 1;
+        const client = await pool.connect();  
         const restaurant_name = req.body.restaurant_name;
-        const unit_queue_time = parseInt(req.body.unit_queue_time);
+        const unit_queue_time = req.body.unit_queue_time;
         const icon_url = req.body.icon_url;
         const menu_url = req.body.menu_url;
-        const data = {
-            restaurant_id: restaurant_id,
-            restaurant_name: restaurant_name,
-            unit_queue_time: unit_queue_time,
-            icon_url: icon_url,
-            menu_url: menu_url
-        };
 
         // insert into `restaurants` table
-        const insert_query = `INSERT INTO restaurants VALUES (${restaurant_id}, '${restaurant_name}', `
-            + `${unit_queue_time}, '${icon_url}', '${menu_url}');`;
-        await client.query(insert_query);
-        
+        const insert_query = `INSERT INTO restaurants VALUES (DEFAULT, '${restaurant_name}', `
+            + `${unit_queue_time}, '${icon_url}', '${menu_url}') RETURNING restaurant_id;`;
+        const result = await client.query(insert_query);
+        const restaurant_id = result.rows[0].restaurant_id;
+
         // create a new table to store this restaurant's queue groups
         const create_table_query = `CREATE TABLE restaurant${restaurant_id} (`
             + "group_id SERIAL PRIMARY KEY, "
+            + "group_key CHAR(8) NOT NULL, "
             + "group_name VARCHAR NOT NULL, "
             + "arrival_time TIMESTAMP WITH TIME ZONE NOT NULL, "
             + "entry_time TIMESTAMP WITH TIME ZONE, "
@@ -78,10 +69,11 @@ async function create_new_restaurant(req, res) {
             + "monster_type VARCHAR NOT NULL, "
             + "queue_status INTEGER NOT NULL, "
             + "phone_number CHAR(8), "
-            + "CONSTRAINT check_phone CHECK (phone_number NOT LIKE '%[^0-9]%') );"
+            + "CONSTRAINT check_phone CHECK (phone_number LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]') );"
         await client.query(create_table_query);
         
-        res.status(201).send(data);
+        const data = await client.query(`SELECT * from restaurants WHERE restuarant_id = ${restaurant_id}`);
+        res.status(201).send(JSON.stringify(data.rows));
         client.release();
     } catch (err) {
         console.error(err);
