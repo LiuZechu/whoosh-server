@@ -17,7 +17,7 @@ var appRouter = function (app) {
     app.delete("/restaurants/:restaurant_id", delete_restaurant);
 
     // Queue Groups Collection
-    //app.get("/restaurants/:restaurant_id/groups", list_all_queue_groups);
+    app.get("/restaurants/:restaurant_id/groups", list_all_queue_groups);
     app.post("/restaurants/:restaurant_id/groups", create_new_queue_group);
 
     // Single Queue Group
