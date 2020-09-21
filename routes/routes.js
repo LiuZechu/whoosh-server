@@ -232,6 +232,12 @@ async function create_new_queue_group(req, res) {
     const restaurant_id = parseInt(req.params.restaurant_id);
     try {
         const client = await pool.connect();
+
+        var exists = await check_restaurant_existence(client, res, restaurant_id);
+        if (!exists) {
+            return;
+        }
+
         const group_name = req.body.group_name;
         const group_size = req.body.group_size;
         const monster_type = req.body.monster_type;
@@ -264,6 +270,12 @@ async function list_one_queue_group (req, res) {
     var group_id = parseInt(req.params.group_id);
     try {
         const client = await pool.connect();
+
+        var exists = await check_restaurant_existence(client, res, restaurant_id);
+        if (!exists) {
+            return;
+        }
+
         const select_query = `SELECT * FROM restaurant${restaurant_id} WHERE group_id = ${group_id};`;
         const result = await client.query(select_query);
         const results = (result) ? result.rows : null;
@@ -288,6 +300,12 @@ async function update_queue_group(req, res) {
     
     try {
         const client = await pool.connect();
+
+        var exists = await check_restaurant_existence(client, res, restaurant_id);
+        if (!exists) {
+            return;
+        }
+
         var is_req_body_empty = true;
         for (const [key, value] of Object.entries(req.body)) {
             const update_query = `UPDATE restaurant${restaurant_id} `
@@ -318,6 +336,12 @@ async function delete_queue_group(req, res) {
     const group_id = parseInt(req.params.group_id);
     try {
         const client = await pool.connect();
+
+        var exists = await check_restaurant_existence(client, res, restaurant_id);
+        if (!exists) {
+            return;
+        }
+
         const delete_query = `DELETE FROM restaurant${restaurant_id} WHERE group_id = ${group_id};`;
         const result = await client.query(delete_query);
 
