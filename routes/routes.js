@@ -51,10 +51,11 @@ async function create_new_restaurant(req, res) {
         const unit_queue_time = req.body.unit_queue_time;
         const icon_url = req.body.icon_url;
         const menu_url = req.body.menu_url;
+        const uid = req.body.uid;
 
         // insert into `restaurants` table
         const insert_query = `INSERT INTO restaurants VALUES (DEFAULT, '${restaurant_name}', `
-            + `${unit_queue_time}, '${icon_url}', '${menu_url}') RETURNING restaurant_id;`;
+            + `${unit_queue_time}, '${icon_url}', '${menu_url}', '${uid}') RETURNING restaurant_id;`;
         const result = await client.query(insert_query);
         const restaurant_id = result.rows[0].restaurant_id;
 
