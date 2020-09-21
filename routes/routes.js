@@ -30,10 +30,17 @@ var appRouter = function (app) {
 // Restaurants Collection
 // GET
 async function list_all_restaurants(req, res) {
+    const uid = req.query.uid;
+
     try {
         const client = await pool.connect();
-        const result = await client.query('SELECT * FROM restaurants;');
-
+        var result;
+        if (uid == null) {
+            result = await client.query('SELECT * FROM restaurants;');
+        } else {
+            result = await client.query(`SELECT * FROM restaurants WHERE uid = '${uid}';`);
+        }
+        
         res.setHeader('content-type', 'application/json');
         res.send(JSON.stringify(result.rows));
         client.release();
