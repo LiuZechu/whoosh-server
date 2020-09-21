@@ -189,7 +189,7 @@ async function delete_restaurant(req, res) {
 
 // Checks whether the restuarant table exists. This 
 // prevents database locking.
-function check_restaurant_existence(client, res, restaurant_id) {
+async function check_restaurant_existence(client, res, restaurant_id) {
     var check_query = `SELECT 1 FROM information_schema.tables WHERE table_name = 'restaurant${restaurant_id}';`;
     var result = await client.query(check_query);
     var exists = result.rowCount == 1;
@@ -207,7 +207,7 @@ async function list_all_queue_groups(req, res) {
     const queue_status = req.query.status;
     try {
         const client = await pool.connect();
-        var exists = check_restaurant_existence(client, res, restaurant_id);
+        var exists = await check_restaurant_existence(client, res, restaurant_id);
         if (!exists) {
             return;
         }
