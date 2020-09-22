@@ -4,11 +4,12 @@ const nexmo = new Nexmo({
   apiKey: 'fef99caa',
   apiSecret: 'NnBrerHfTzaFv4a1',
 });
+const auth = require("../auth.js").authenticateJWT;
 
 var appRouter = function (app) {
     // NOTE: DO NOT UNCOMMENT THIS. I HAVE LIMTED FREE CREDIT FOR SMS.
     // uncomment this to send SMS
-    // app.post("/sms", send_sms);
+    // app.post("/sms", auth, send_sms);
 }
 
 async function send_sms(req, res) {

@@ -10,21 +10,21 @@ const auth = require("../auth.js").authenticateJWT;
 var appRouter = function (app) {
     // Restaurants Collection
     app.get("/restaurants", auth, list_all_restaurants);
-    app.post("/restaurants", create_new_restaurant);
+    app.post("/restaurants", auth, create_new_restaurant);
 
     // Single Restaurant 
-    app.get("/restaurants/:restaurant_id", list_one_restaurant);
-    app.put("/restaurants/:restaurant_id", update_restaurant);
-    app.delete("/restaurants/:restaurant_id", delete_restaurant);
+    app.get("/restaurants/:restaurant_id", auth, list_one_restaurant);
+    app.put("/restaurants/:restaurant_id", auth, update_restaurant);
+    app.delete("/restaurants/:restaurant_id", auth, delete_restaurant);
 
     // Queue Groups Collection
-    app.get("/restaurants/:restaurant_id/groups", list_all_queue_groups);
-    app.post("/restaurants/:restaurant_id/groups", create_new_queue_group);
+    app.get("/restaurants/:restaurant_id/groups", auth, list_all_queue_groups);
+    app.post("/restaurants/:restaurant_id/groups", auth, create_new_queue_group);
 
     // Single Queue Group
-    app.get("/restaurants/:restaurant_id/groups/:group_id", list_one_queue_group);
-    app.put("/restaurants/:restaurant_id/groups/:group_id", update_queue_group);
-    app.delete("/restaurants/:restaurant_id/groups/:group_id", delete_queue_group);
+    app.get("/restaurants/:restaurant_id/groups/:group_id", auth, list_one_queue_group);
+    app.put("/restaurants/:restaurant_id/groups/:group_id", auth, update_queue_group);
+    app.delete("/restaurants/:restaurant_id/groups/:group_id", auth, delete_queue_group);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
