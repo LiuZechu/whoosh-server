@@ -11,7 +11,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-auth(app);
+auth.authServer(app);
 routes(app);
 sms_routes(app);
 

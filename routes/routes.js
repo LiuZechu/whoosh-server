@@ -5,10 +5,11 @@ const pool = new Pool({
     rejectUnauthorized: false
   }
 });
+const auth = require("../auth.js").authenticateJWT;
 
 var appRouter = function (app) {
     // Restaurants Collection
-    app.get("/restaurants", list_all_restaurants);
+    app.get("/restaurants", auth, list_all_restaurants);
     app.post("/restaurants", create_new_restaurant);
 
     // Single Restaurant 

@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const accessTokenSecret = 'whooshservice'; // TODO: choose a complex random string
+
 var users = [
     {
         username: 'whoosh',
@@ -9,7 +10,7 @@ var users = [
     }
 ];
 
-var appRouter = function (app) {
+function appRouter(app) {
     app.post('/login', (req, res) => {
         // Read username and password from request body
         const { username, password } = req.body;
@@ -30,5 +31,25 @@ var appRouter = function (app) {
     });
 }
 
+function authenticateJWT(req, res, next) {
+    const authHeader = req.headers.authorization;
 
-module.exports = appRouter;
+    if (authHeader) {
+        const token = authHeader.split(' ')[1];
+
+        jwt.verify(token, accessTokenSecret, (err, user) => {
+            if (err) {
+                return res.sendStatus(403);
+            }
+
+            req.user = user;
+            next();
+        });
+    } else {
+        res.sendStatus(401);
+    }
+};
+
+
+module.exports.authServer = appRouter;
+module.exports.authenticateJWT = authenticateJWT;
