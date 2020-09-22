@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require('cors');
 const routes = require("./routes/routes.js");
 const sms_routes = require("./routes/sms_routes.js");
-const auth = require("auth.js");
+const auth = require("./auth.js");
 
 const app = express();
 
