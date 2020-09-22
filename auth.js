@@ -1,6 +1,13 @@
 const jwt = require('jsonwebtoken');
 
 const accessTokenSecret = 'whooshservice'; // TODO: choose a complex random string
+var users = [
+    {
+        username: 'whoosh',
+        password: 'whoosh',
+        role: 'admin'
+    }
+];
 
 var appRouter = function (app) {
     app.post('/login', (req, res) => {
