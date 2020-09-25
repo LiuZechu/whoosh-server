@@ -43,6 +43,7 @@ async function list_all_restaurants(req, res) {
         }
         
         res.setHeader('content-type', 'application/json');
+        res.setHeader('Strict-Transport-Security', 'max-age=604800');
         res.send(JSON.stringify(result.rows));
         client.release();
     } catch (err) {
