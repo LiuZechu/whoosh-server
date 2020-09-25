@@ -80,6 +80,7 @@ async function create_new_restaurant(req, res) {
             + "phone_number CHAR(8), "
             + "alerted INTEGER NOT NULL, "
             + "CONSTRAINT check_phone CHECK (phone_number NOT LIKE '%[^0-9]%') );";
+
         await client.query(create_table_query);
         
         const data = await client.query(`SELECT * from restaurants WHERE restaurant_id = ${restaurant_id}`);
