@@ -32,7 +32,7 @@ var appRouter = function (app) {
 // GET
 async function list_all_restaurants(req, res) {
     const uid = req.query.uid;
-
+    res.setHeader('Strict-Transport-Security', 'max-age=604800');
     try {
         const client = await pool.connect();
         var result;
@@ -43,7 +43,6 @@ async function list_all_restaurants(req, res) {
         }
         
         res.setHeader('content-type', 'application/json');
-        res.setHeader('Strict-Transport-Security', 'max-age=604800');
         res.send(JSON.stringify(result.rows));
         client.release();
     } catch (err) {
@@ -54,6 +53,7 @@ async function list_all_restaurants(req, res) {
 
 // POST
 async function create_new_restaurant(req, res) {
+    res.setHeader('Strict-Transport-Security', 'max-age=604800');
     try {
         const client = await pool.connect();  
         const restaurant_name = req.body.restaurant_name;
@@ -86,6 +86,7 @@ async function create_new_restaurant(req, res) {
         
         const data = await client.query(`SELECT * from restaurants WHERE restaurant_id = ${restaurant_id}`);
         
+        res.setHeader('Strict-Transport-Security', 'max-age=604800');
         res.setHeader('content-type', 'application/json');
         res.status(201).send(JSON.stringify(data.rows[0]));
         client.release();
@@ -98,6 +99,7 @@ async function create_new_restaurant(req, res) {
 // Single Restaurant
 // GET
 async function list_one_restaurant(req, res) {
+    res.setHeader('Strict-Transport-Security', 'max-age=604800');
     var restaurant_id = parseInt(req.params.restaurant_id);
     try {
         const client = await pool.connect();
@@ -120,6 +122,8 @@ async function list_one_restaurant(req, res) {
 
 // PUT
 async function update_restaurant(req, res) {
+    res.setHeader('Strict-Transport-Security', 'max-age=604800');
+
     const restaurant_id = req.params.restaurant_id;
     const restaurant_name = req.body.restaurant_name;
     const unit_queue_time = req.body.unit_queue_time;
@@ -172,6 +176,8 @@ async function update_restaurant(req, res) {
 
 // DELETE
 async function delete_restaurant(req, res) {
+    res.setHeader('Strict-Transport-Security', 'max-age=604800');
+
     const restaurant_id = parseInt(req.params.restaurant_id);
     try {
         const client = await pool.connect();
@@ -194,6 +200,8 @@ async function delete_restaurant(req, res) {
 // Checks whether the restuarant table exists. This 
 // prevents database locking.
 async function check_restaurant_existence(client, res, restaurant_id) {
+    res.setHeader('Strict-Transport-Security', 'max-age=604800');
+
     var check_query = `SELECT 1 FROM information_schema.tables WHERE table_name = 'restaurant${restaurant_id}';`;
     var result = await client.query(check_query);
     var exists = result.rowCount == 1;
@@ -207,6 +215,8 @@ async function check_restaurant_existence(client, res, restaurant_id) {
 
 // GET
 async function list_all_queue_groups(req, res) {
+    res.setHeader('Strict-Transport-Security', 'max-age=604800');
+
     const restaurant_id = parseInt(req.params.restaurant_id);
     const queue_status = req.query.status;
     try {
@@ -233,6 +243,8 @@ async function list_all_queue_groups(req, res) {
 
 // POST
 async function create_new_queue_group(req, res) {
+    res.setHeader('Strict-Transport-Security', 'max-age=604800');
+
     const restaurant_id = parseInt(req.params.restaurant_id);
     try {
         const client = await pool.connect();
@@ -270,6 +282,8 @@ async function create_new_queue_group(req, res) {
 // Single Queue Group
 // GET
 async function list_one_queue_group (req, res) {
+    res.setHeader('Strict-Transport-Security', 'max-age=604800');
+
     var restaurant_id = parseInt(req.params.restaurant_id);
     var group_id = parseInt(req.params.group_id);
     try {
@@ -299,6 +313,8 @@ async function list_one_queue_group (req, res) {
 
 // PUT
 async function update_queue_group(req, res) {
+    res.setHeader('Strict-Transport-Security', 'max-age=604800');
+
     const restaurant_id = req.params.restaurant_id;
     const group_id = req.params.group_id;
     
@@ -336,6 +352,8 @@ async function update_queue_group(req, res) {
 
 // DELETE
 async function delete_queue_group(req, res) {
+    res.setHeader('Strict-Transport-Security', 'max-age=604800');
+
     const restaurant_id = parseInt(req.params.restaurant_id);
     const group_id = parseInt(req.params.group_id);
     try {
